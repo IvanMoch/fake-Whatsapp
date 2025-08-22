@@ -7,10 +7,9 @@ export class UserModel {
 
     static async createUser(user) {
         try {
-            const validatedUser = await validateUser(user);
-            const hashedPassword = await bcrypt.hash(validatedUser.passWord_hash, 10);
+            const hashedPassword = await bcrypt.hash(userData.passWord_hash, 10);
             const [result] = await pool.query('INSERT INTO users (user_id, username, email, passWord_hash, avatar_url, status) VALUES (?, ?, ?, ?, ?, ?)', [
-                validatedUser.user_id, validateUser.username, validatedUser.email, hashedPassword, validatedUser.avatar_url, validatedUser.status
+                user.user_id, user.username, user.email, hashedPassword, user.avatar_url, user.status
             ]);
         }catch(error) {
             throw new Error(`Error creating user: ${error.message}`);
@@ -45,31 +44,30 @@ export class UserModel {
     }
 
     static async updateUser(userId, userData) {
-        const validatedUser = validateUpdateUser(userData);
         try {
             const updates = [];
             const values = [];
 
-            if (validatedUser.username) {
+            if (userData.username) {
                 updates.push('username = ?');
-                values.push(validatedUser.username);
+                values.push(userData.username);
             }
-            if (validatedUser.email) {
+            if (userData.email) {
                 updates.push('email = ?');
-                values.push(validatedUser.email);
+                values.push(userData.email);
             }
-            if (validatedUser.passWord_hash) {
-                const hashedPassword = await bcrypt.hash(validatedUser.passWord_hash, 10);
+            if (userData.passWord_hash) {
+                const hashedPassword = await bcrypt.hash(userData.passWord_hash, 10);
                 updates.push('passWord_hash = ?');
                 values.push(hashedPassword);
             }
-            if (validatedUser.avatar_url) {
+            if (userData.avatar_url) {
                 updates.push('avatar_url = ?');
-                values.push(validatedUser.avatar_url);
+                values.push(userData.avatar_url);
             }
-            if (validatedUser.status) {
+            if (userData.status) {
                 updates.push('status = ?');
-                values.push(validatedUser.status);
+                values.push(userData.status);
             }
 
             values.push(userId);
